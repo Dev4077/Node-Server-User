@@ -1,13 +1,17 @@
 const db = require('../model')
 const userModel = db.userModel
 
-const userRegister = async (req,res)=>{
+
+const userRegister = async (req,res)=>{ 
     try{
-        const {firstname,lastname,email,phone} = req.body
-        if(!firstname){res.json({status:false,message:'Firstname required'})}
-        else if(!lastname){res.json({status:false,message:'Lastname required'})}
+        const {firstName, lastName, email, contact, address1, address2, flag} = req.body
+        if(!firstName){res.json({status:false,message:'Firstname required'})}
+        else if(!lastName){res.json({status:false,message:'Lastname required'})}
         else if(!email){res.json({status:false,message:'Email required'})}
-        else if(!phone){res.json({status:false,message:'Phone required'})}
+        else if(!contact){res.json({status:false,message:'Phone required'})}
+        else if(!address1){res.json({status:false,message:'Address1 required'})}
+        else if(!address2){res.json({status:false,message:'Address2 required'})}
+        // else if(!flag){res.json({status:false,message:'Item Deleted'})}
         else{
             const isEmail = await userModel.count({email})
             if(isEmail){
@@ -15,19 +19,25 @@ const userRegister = async (req,res)=>{
             }else{
                 if(req.path){
                     await userModel.create({
-                        firstname,
-                        lastname,
+                        firstName,
+                        lastName,
                         email,
-                        phone,
-                        profile_img:req.path
+                        contact,
+                        address1,
+                        address2,
+                        flag,
+                        // profile_img:req.path
                     })
                     res.json({status:true,message:'Data recorded successfully...'})
                 }else{
                     await userModel.create({
-                        firstname,
-                        lastname,
+                        firstName,
+                        lastName,
                         email,
-                        phone
+                        contact,
+                        address1,
+                        address2,
+                        flag,
                     })
                     res.json({status:true,message:'Data recorded successfully...'})
                 }
@@ -37,6 +47,58 @@ const userRegister = async (req,res)=>{
         res.json({status:false,message:err.message})
     }
 }
+
+const userDetailsGet = async (req, res) => {
+    try {
+        const users = await userModel.find(); 
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+
+const deleteUser = async (req, res) => {
+    const {_id} = req.params;
+    // console.log(_id);
+    try {
+      const user = await userModel.findById(_id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      user.flag = false;
+      await user.save();
+      res.json({ message: 'User deleted successfully' });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+
+  const updateUser = async (req, res) => {
+    const { _id } = req.params;
+    const { firstName, lastName, email, contact, address1, address2 } = req.body;
+    try {
+      const user = await userModel.findById(_id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.contact = contact;
+      user.address1 = address1;
+      user.address2 = address2;
+      user.flag = true;
+
+      await user.save();
+      res.json({ message: 'User updated successfully', user });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+  
 module.exports = {
-    userRegister
+    userRegister,
+    userDetailsGet,
+    deleteUser,
+    updateUser
 }

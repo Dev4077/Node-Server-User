@@ -1,11 +1,14 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-    firstname : {type:String,required:true},
-    lastname : {type:String,required:true},
+    firstName : {type:String,required:true},
+    lastName : {type:String,required:true},
     email : {type:String,required:true},
-    phone : {type:Number,required:true},
-    profile_img : {type:String,required:false}
+    contact : {type:Number,required:true},
+    address1 : {type:String,required:true},
+    address2 : {type:String,required:true},
+    flag : {type:Boolean},
+    // profile_img : {type:String,required:false}
 },{timestamps:true})
 
 const userModel = mongoose.model('user',userSchema)
