@@ -4,13 +4,14 @@ const userModel = db.userModel
 
 const userRegister = async (req,res)=>{ 
     try{
-        const {firstName, lastName, email, contact, address1, address2, flag} = req.body
+        const {firstName, lastName, email, contact, address1, address2, role ,flag} = req.body
         if(!firstName){res.json({status:false,message:'Firstname required'})}
         else if(!lastName){res.json({status:false,message:'Lastname required'})}
         else if(!email){res.json({status:false,message:'Email required'})}
         else if(!contact){res.json({status:false,message:'Phone required'})}
         else if(!address1){res.json({status:false,message:'Address1 required'})}
         else if(!address2){res.json({status:false,message:'Address2 required'})}
+        else if(!role){res.json({status:false,message:'role required'})}
         // else if(!flag){res.json({status:false,message:'Item Deleted'})}
         else{
             const isEmail = await userModel.count({email})
@@ -25,6 +26,7 @@ const userRegister = async (req,res)=>{
                         contact,
                         address1,
                         address2,
+                        role,
                         flag,
                         // profile_img:req.path
                     })
@@ -37,6 +39,7 @@ const userRegister = async (req,res)=>{
                         contact,
                         address1,
                         address2,
+                        role,
                         flag,
                     })
                     res.json({status:true,message:'Data recorded successfully...'})
@@ -75,7 +78,7 @@ const deleteUser = async (req, res) => {
 
   const updateUser = async (req, res) => {
     const { _id } = req.params;
-    const { firstName, lastName, email, contact, address1, address2 } = req.body;
+    const { firstName, lastName, email, contact, address1, address2, role } = req.body;
     try {
       const user = await userModel.findById(_id);
       if (!user) {
@@ -87,6 +90,7 @@ const deleteUser = async (req, res) => {
       user.contact = contact;
       user.address1 = address1;
       user.address2 = address2;
+      user.role = role;
       user.flag = true;
 
       await user.save();
