@@ -45,7 +45,6 @@ const userLogin = async (req, res) => {
             if (auths !== null) {
                 const passwordMatch = await bcrypt.compare(password, auths.password);
                 if (passwordMatch) {
-                    // Generate token
                     const token = jwt.sign({ email: auths.email }, JWT_SECRET_KEY , { expiresIn: '1h' });
                     res.send({ status: true, token: token });
                 } else {
