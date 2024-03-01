@@ -116,7 +116,7 @@ const getCategory = async (req, res) => {
 
 const getSubCategory = async (req, res) => {
     try {
-        const users = await subcategoryModel.find();
+        const users = await subcategoryModel.find().populate('perentCategory');
         res.json(users);
     } catch (err) {
         res.status(500).json({ message: err.message });

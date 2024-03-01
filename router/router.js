@@ -27,6 +27,10 @@ router.get('/getcategory', productController.getCategory);
 
 router.get('/getsubcategory', productController.getSubCategory);
 
+router.post('/getsubcategory', productController.getSubCategory);
+
+router.post('/getproduct', productController.getProduct);
+
 router.get('/getproduct', productController.getProduct);
 
 
