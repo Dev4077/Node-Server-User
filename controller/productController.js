@@ -34,8 +34,9 @@ const addCategory = async (req, res) => {
 
 const addSubCategory = async (req, res) => {
     try {
-        const { subcategory } = req.body
-        if (!subcategory) { res.json({ status: false, message: 'Sub-Category required' }) }
+        const { subcategory, perentCategory } = req.body
+        if (!perentCategory) { res.json({ status: false, message: 'Perent-Category required' }) }
+        else if (!subcategory) { res.json({ status: false, message: 'Sub-Category required' }) }
 
         else {
             const isSubCategory = await subcategoryModel.count({ subcategory })
@@ -44,11 +45,13 @@ const addSubCategory = async (req, res) => {
             } else {
                 if (req.path) {
                     await subcategoryModel.create({
+                        perentCategory,
                         subcategory,
                     })
                     res.json({ status: true, message: 'Data recorded successfully...' })
                 } else {
                     await subcategoryModel.create({
+                        perentCategory,
                         subcategory,
                     })
                     res.json({ status: true, message: 'Data recorded successfully...' })
@@ -62,12 +65,12 @@ const addSubCategory = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { productTitle, productDes, productPrice, selectCategory, selectSubCategory, productImageURL } = req.body
+        const { productTitle, productDes, productPrice, categoryID, subCategoryID, productImageURL } = req.body
         if (!productTitle) { res.json({ status: false, message: 'Title required' }) }
         else if (!productDes) { res.json({ status: false, message: 'Description required' }) }
         else if (!productPrice) { res.json({ status: false, message: 'Price required' }) }
-        else if (!selectCategory) { res.json({ status: false, message: 'Category required' }) }
-        else if (!selectSubCategory) { res.json({ status: false, message: 'selectSubCategory required' }) }
+        else if (!categoryID) { res.json({ status: false, message: 'Category required' }) }
+        else if (!subCategoryID) { res.json({ status: false, message: 'selectSubCategory required' }) }
         else if (!productImageURL) { res.json({ status: false, message: 'productImageURL required' }) }
         else {
             const isTitle = await productModel.count({ productTitle })
@@ -79,8 +82,8 @@ const addProduct = async (req, res) => {
                         productTitle,
                         productDes,
                         productPrice,
-                        selectCategory,
-                        selectSubCategory,
+                        categoryID,
+                        subCategoryID,
                         productImageURL,
                     })
                     res.json({ status: true, message: 'Data recorded successfully...' })
@@ -89,8 +92,8 @@ const addProduct = async (req, res) => {
                         productTitle,
                         productDes,
                         productPrice,
-                        selectCategory,
-                        selectSubCategory,
+                        categoryID,
+                        subCategoryID,
                         productImageURL,
                     })
                     res.json({ status: true, message: 'Data recorded successfully...' })
@@ -122,12 +125,12 @@ const getSubCategory = async (req, res) => {
 
 const getProduct = async (req, res) => {
     try {
-        const users = await productModel.find();
-        res.json(users);
+        const products = await productModel.find().populate('categoryID').populate('subCategoryID');
+        res.json(products);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-}
+};
 
 module.exports = {
     addCategory,
