@@ -2,12 +2,16 @@ const mongoose = require('mongoose')
 
 const categorySchema = new mongoose.Schema({
     category: { type: String, required: true },
+    isCatActive: {type:Boolean, required:true},
+    flag : {type:Boolean},
 }, { timestamps: true })
 const categoryModel = mongoose.model('Category', categorySchema)
 
 const subcategorySchema = new mongoose.Schema({
     perentCategory: {type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     subcategory: { type: String, required: true },
+    isSubCatActive: {type:Boolean, required:true},
+    flag : {type:Boolean},
 }, { timestamps: true })
 const subcategoryModel = mongoose.model('Subcategory', subcategorySchema)
 
@@ -18,6 +22,7 @@ const productSchema = new mongoose.Schema({
     categoryID: {type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     subCategoryID: {type: mongoose.Schema.Types.ObjectId, ref: 'Subcategory' },
     productImageURL: { type: String, required: true },
+    
 }, { timestamps: true })
 const productModel = mongoose.model('Product', productSchema)
 
