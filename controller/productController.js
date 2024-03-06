@@ -181,18 +181,38 @@ const getProduct = async (req, res) => {
 };
 
 const editCategory = async (req, res) => {
+    const {_id} = req.params;
+    const { category, isCatActive } = req.body;
     try {
-        const { id } = req.params;
-        const { category, isCatActive, flag } = req.body;
-        const updatedAt = new Date();
-
-        const updatedCategory = await subcategoryModel.findByIdAndUpdate(id, { category, isCatActive, flag, updatedAt }, { new: true });
-
-        if (!updatedCategory) {
+        const editcategory = await categoryModel.findById(_id)
+        
+        if (!editcategory) {
             return res.status(404).json({ message: 'Category not found' });
         }
+        editcategory.category = category;
+        editCategory.isCatActive = isCatActive;
+        await editcategory.save();
+        res.json({ message: 'Category updated successfully', editcategory });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
 
-        res.json(updatedCategory);
+const editSubCategory = async (req, res) => {
+    const { _id } = req.params;
+    const { subcategory, perentCategory, isSubCatActive } = req.body;
+    try {
+        const editSubcategory = await subcategoryModel.findById(_id);
+        
+        if (!editSubcategory) {
+            return res.status(404).json({ message: 'Sub-Category not found' });
+        }
+        editSubcategory.subcategory = subcategory;
+        editSubcategory.perentCategory = perentCategory;
+        editSubcategory.isSubCatActive = isSubCatActive;
+        await editSubcategory.save();
+        res.json({ message: 'Sub-Category updated successfully', editSubcategory });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server Error' });
@@ -216,24 +236,6 @@ const deleteCategory = async (req, res) => {
     }
 };
 
-  
-
-const editSubCategory = async (req, res) => {
-    const { _id } = req.params;
-    const { subcategory, perentCategory, isSubCatActive } = req.body;
-
-    try {
-        const updatedSubCategory = await subcategoryModel.findById(_id, { subcategory, perentCategory, isSubCatActive }, { new: true });
-        if (!updatedSubCategory) {
-            return res.status(404).json({ message: 'Sub-Category not found' });
-        }
-        return res.status(200).json(updatedSubCategory);
-    } catch (error) {
-        console.error('Error editing sub-category:', error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-};
-
 const deleteSubCategory = async (req, res) => {
     const { _id } = req.params;
 
@@ -251,7 +253,6 @@ const deleteSubCategory = async (req, res) => {
     }
 };
 
-
 module.exports = {
     addCategory,
     addSubCategory,
@@ -262,7 +263,7 @@ module.exports = {
     activeCat,
     activeSubCat,
     editCategory,
-    deleteCategory,
     editSubCategory,
+    deleteCategory,
     deleteSubCategory,
 }
